@@ -1,0 +1,82 @@
+## Install httpd and change port 6300
+sudo yum install -y httpd php php-mysqlnd php-cli php-gd php-mbstring php-xml php-pear
+sudo systemctl enable httpd
+sudo systemctl start httpd
+
+sudo vi /etc/httpd/conf/httpd.conf
+
+## change listen port 80 to ->> port 6300
+
+## verify running service in which port
+sudo netstat -tulpn | grep 6300
+
+-----x-xx-xxx
+
+## Install MariaDB in DB server
+
+sudo yum update
+sudo yum install -y mariadb-server mariadb
+
+sudo systemctl enable mariadb
+sudo systemctl start mariadb
+sudo systemctl status mariadb   # Optional, check service status
+
+## Secure MariaDB:
+sudo mysql_secure_installation
+Set root password
+- Remove anonymous users
+- Disallow remote root login
+- Remove test database
+- Reload privileges
+
+## Create DB and User
+sudo mysql -u root -p
+
+CREATE DATABASE kodekloud_db4;
+CREATE USER 'kodekloud_gem'@'%' IDENTIFIED BY 'B4zNgHA7Ya';
+GRANT ALL PRIVILEGES ON kodekloud_db4.* TO 'kodekloud_gem'@'%';
+FLUSH PRIVILEGES;
+EXIT;
+
+## verify
+mysql -u kodekloud_gem -p kodekloud_db4
+
+## Allow remote access if app hosts are on different servers
+sudo vi /etc/my.cnf.d/mariadb-server.cnf
+-->> remove comment # bind-address = 0.0.0.0
+
+
+*** Important **
+## Need to check the DB connection string at index.php of each app servers
+
+cat /var/www/html/index.php
+
+and If wrong or missing correct to connect with DB
+
+Here is for your reference to update. It can be random change as per question!!! ** It's case and order sensitive .. pls note!!
+-------------
+<?php
+
+$dbname = 'kodekloud_db2';
+$dbuser = 'kodekloud_rin';
+$dbpass = 'ksH85UJjhb';
+$dbhost = 'stdb01';
+
+// Connect to the database
+$link = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
+
+// Check connection
+if (!$link) {
+    die("Unable to connect to '$dbhost': " . mysqli_connect_error());
+}
+
+echo "App is able to connect to the database using user $dbuser";
+
+?>
+------------
+
+## And then restart the httpd service.
+sudo systemctl restart httpd
+
+
+@@@@ Done, Happy learning !! @@@
