@@ -1,0 +1,51 @@
+
+yum install httpd -y
+systemctl enable httpd
+systemctl start httpd
+
+## change listen port 80 to ->> port 8084
+sudo vi /etc/httpd/conf/httpd.conf
+
+## copy the backups from jumphost to app server 2 tmp
+scp -r /home/thor/media tony@stapp02:/tmp/
+scp -r /home/thor/cluster tony@stapp02:/tmp/
+
+## go to app server 2 and move files from tmp to httpd root folder
+sudo mv /tmp/media /var/www/html/
+sudo mv /tmp/cluster /var/www/html/
+
+
+## Create VirtualHost for media & cluster under /etc/httpd/conf.d
+touch virtualhost.conf
+
+------
+<VirtualHost *:8084>
+    DocumentRoot /var/www/html
+
+    Alias /media /var/www/html/media
+    <Directory /var/www/html/media>
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Require all granted
+    </Directory>
+
+    Alias /cluster /var/www/html/cluster
+    <Directory /var/www/html/cluster>
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Require all granted
+    </Directory>
+</VirtualHost>
+----------
+
+## Restart service
+sudo systemctl restart httpd
+sudo systemctl enable httpd
+
+
+## verify
+curl http://localhost:8084/media/
+curl http://localhost:8084/cluster/
+
+
+@@@ done @@@
