@@ -1,0 +1,5 @@
+# Install git package 
+yum install git -y
+
+# create a bare repo (no working tree)
+git init --bare news.git
