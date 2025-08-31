@@ -1,0 +1,8 @@
+# Go to the repo directory
+cd /usr/src/kodekloudrepos/news
+
+# Make sure you’re on the master branch
+git checkout master
+
+# Create the new branch
+git checkout -b xfusioncorp_news

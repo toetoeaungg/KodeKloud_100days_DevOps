@@ -1,0 +1,27 @@
+# Go to repo
+cd /usr/src/kodekloudrepos/beta
+
+# Ensure you’re on master
+git checkout master
+
+# Create new branch
+git checkout -b nautilus
+
+# Copy the file
+cp /tmp/index.html .
+
+# Add and commit
+git add index.html
+git commit -m "Add index.html in nautilus branch"
+
+# Push the new branch
+git push origin nautilus
+
+----
+
+# Merge nautilus into master
+git checkout master
+git merge nautilus -m "Merge nautilus branch into master"
+
+# Push master branch
+git push origin master

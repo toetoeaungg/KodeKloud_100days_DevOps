@@ -1,0 +1,18 @@
+Analysis the issue
+
+##check the port usage with netstat
+sudo netstat -tulnp | grep 6200
+
+## issue is using the same port from 2 services, so stop one service and restart the apache service
+sudo systemctl stop sendmail
+sudo systemctl disable sendmail
+
+sudo systemctl start httpd
+sudo systemctl enable httpd
+
+### issue is still can't call from other host with curl and telnet
+## check the iptables rules
+sudo iptables -L -n --line-numbers
+
+#### add the iptables rule for allow port 6200
+sudo iptables -I INPUT 4 -p tcp --dport 6400 -j ACCEPT

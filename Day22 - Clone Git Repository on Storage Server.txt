@@ -1,0 +1,5 @@
+# go to the given location
+cd <location>
+
+#and git clone to current locaiton
+git clone <name.git>

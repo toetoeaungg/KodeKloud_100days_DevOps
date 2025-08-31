@@ -1,0 +1,15 @@
+#!/bin/bash
+
+BK_FILE="xfusioncorp_news.zip"
+SOURCE_DIR="/var/www/html/news"
+BK_DIR="/backup"
+
+SRV_DIR="/backup/"
+SSH_USER="clint"
+SSH_HOST="stbkp01"
+
+# Create backup zip file
+zip -r "${BK_DIR}/${BK_FILE}" "${SOURCE_DIR}"
+
+# Copy to backup server
+scp "${BK_DIR}/${BK_FILE}" ${SSH_USER}@${SSH_HOST}:${SRV_DIR}

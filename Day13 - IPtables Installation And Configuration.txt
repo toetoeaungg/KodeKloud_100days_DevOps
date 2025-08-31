@@ -1,0 +1,28 @@
+
+# Install iptables service on each app server
+sudo yum install iptables-service -y
+sudo systemctl enable --now  iptables
+sudo systemctl status iptables
+
+## link all rules of iptables (fresh iptables)
+sudo iptables -F
+
+[tony@stapp01 ~]$ sudo iptables -F
+[tony@stapp01 ~]$ sudo iptables -A INPUT -i lo -j ACCEPT
+[tony@stapp01 ~]$ sudo iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT   (accept the coming back established traffic)
+[tony@stapp01 ~]$ sudo iptables -A INPUT -p tcp --dport 22 -j ACCEPT	(accept the coming ssh)
+
+[tony@stapp01 ~]$ sudo iptables -A INPUT -p tcp -s 172.16.238.14 --dport 8085 -j ACCEPT		(accept incoming traffic from LOAD Balancer svr)
+[tony@stapp01 ~]$ sudo iptables -A INPUT -p tcp --dport 8085 -j DROP		(DROP any other traffic from port 8085)
+
+[tony@stapp01 ~]$ sudo iptables -L -n --line-numbers		(List the add rules from IP Tables)
+Chain INPUT (policy ACCEPT)
+num  target     prot opt source               destination         
+1    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           
+2    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED
+3    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:22
+4    ACCEPT     tcp  --  172.16.238.14        0.0.0.0/0            tcp dpt:8085
+5    DROP       tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:8085
+
+### Save the IP tables for paramentnt
+sudo service iptables save

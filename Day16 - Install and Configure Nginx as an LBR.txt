@@ -1,0 +1,43 @@
+
+@@ Install and Config on LBR Svr @@
+yum install nginx -y
+
+## Add the config in main Nginx config file ##
+sudo vi /etc/nginx/nginx.conf
+
+---
+http {
+    upstream app_servers {
+        server stapp01:6300;
+        server stapp02:6300;
+        server stapp03:6300;
+    }
+
+    server {
+        listen 80;
+
+        location / {
+            proxy_pass http://app_servers;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+    }
+}
+---------
+
+## Test Nginx Config ##
+sudo nginx -t
+
+## Reload Nginx ##
+sudo systemctl reload nginx
+
+xxxxxxxxxxxx
+
+@@ Check the running port of Nginx in all app servers
+
+#####
+sudo grep -i "Listen" /etc/httpd/conf/httpd.conf
+# or for Ubuntu/Debian
+sudo grep -i "Listen" /etc/apache2/ports.conf
+

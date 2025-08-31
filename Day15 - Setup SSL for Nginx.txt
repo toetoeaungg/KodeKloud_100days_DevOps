@@ -1,0 +1,66 @@
+SSL Files proper location
+
+* Certificates → /etc/ssl/certs/
+* Private keys → /etc/ssl/private/
+
+sudo mv /tmp/nautilus.crt /etc/ssl/certs/nautilus.crt
+sudo mv /tmp/nautilus.key /etc/ssl/private/nautilus.key
+
+sudo chmod 644 /etc/ssl/certs/nautilus.crt
+sudo chmod 600 /etc/ssl/private/nautilus.key
+
+
+## Edit Nginx Configuration
+Open /etc/nginx/nginx.conf -- or -- better, create a separate config under /etc/nginx/conf.d/ssl.conf. Example (/etc/nginx/conf.d/ssl.conf)
+
+-----------
+# Redirect all HTTP to HTTPS
+server {
+    listen 80;
+    server_name _;
+    return 301 https://$host$request_uri;
+}
+
+# HTTPS server block
+server {
+    listen       443 ssl http2;
+    listen       [::]:443 ssl http2;
+    server_name  _;
+
+    root   /usr/share/nginx/html;
+    index  index.html index.htm;
+
+    ssl_certificate     /etc/ssl/certs/nautilus.crt;
+    ssl_certificate_key /etc/ssl/private/nautilus.key;
+
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_session_cache   shared:SSL:1m;
+    ssl_session_timeout 10m;
+    ssl_ciphers PROFILE=SYSTEM;
+    ssl_prefer_server_ciphers on;
+
+    error_page 404 /404.html;
+    location = /404.html { }
+
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html { }
+}
+---------------
+
+## Test Configuration
+sudo nginx -t
+
+## Reload Nginx
+sudo systemctl reload nginx
+
+## Verify
+curl -k https://localhost
+
+xxxxxxxxxxxxxxx
+
+Step 2
+
+## create the index.html
+echo "Welcome!" | sudo tee /usr/share/nginx/html/index.html
+
+

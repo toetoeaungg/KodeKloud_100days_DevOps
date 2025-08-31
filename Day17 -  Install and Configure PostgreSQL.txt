@@ -1,0 +1,42 @@
+
+## switch to postgres user
+sudo -i -u postgres
+
+## connect to psql
+psql
+
+## Create db user with password
+CREATE USER kodekloud_tim WITH PASSWORD 'ksH85UJjhb';
+
+verify
+\du
+
+                                     List of roles
+   Role name   |                         Attributes                         | Member of 
+---------------+------------------------------------------------------------+-----------
+ kodekloud_tim |                                                            | {}
+ postgres      | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+
+
+--------
+
+## Create database and grant full permission
+CREATE DATABASE kodekloud_db1;
+GRANT ALL PRIVILEGES ON DATABASE kodekloud_db1 TO kodekloud_tim;
+
+## List the databases
+\l
+
+     Name      |  Owner   | Encoding | Collate | Ctype  |     Access privileges      
+---------------+----------+----------+---------+--------+----------------------------
+ kodekloud_db1 | postgres | UTF8     | C.utf8  | C.utf8 | =Tc/postgres              +
+               |          |          |         |        | postgres=CTc/postgres     +
+               |          |          |         |        | kodekloud_tim=CTc/postgres
+ postgres      | postgres | UTF8     | C.utf8  | C.utf8 | 
+ template0     | postgres | UTF8     | C.utf8  | C.utf8 | =c/postgres               +
+               |          |          |         |        | postgres=CTc/postgres
+ template1     | postgres | UTF8     | C.utf8  | C.utf8 | =c/postgres               +
+               |          |          |         |        | postgres=CTc/postgres
+
+## quit from database
+\q

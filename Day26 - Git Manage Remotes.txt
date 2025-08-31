@@ -1,0 +1,26 @@
+# Go to repo
+cd /usr/src/kodekloudrepos/games/
+
+# check git branch
+git branch
+
+# add git remote with new location point
+git remote add dev_games /opt/xfusioncorp_games.git
+
+# check git remote
+git remote -v
+    dev_games       /opt/xfusioncorp_games.git (fetch)
+    dev_games       /opt/xfusioncorp_games.git (push)
+    origin  /opt/games.git (fetch)
+    origin  /opt/games.git (push)
+
+# copy the file from tmp
+cp /tmp/index.html .
+
+# add file, commit to master branch of git remote
+cp /tmp/index.html .
+git add index.html 
+git commit -m "Add index.html to master branch"
+
+# push to master branch of git remote
+git push dev_games master

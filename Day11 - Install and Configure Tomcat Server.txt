@@ -1,0 +1,95 @@
+12:02 PM 8/22/2025
+
+->> step 1 : Install Tomcat
+
+sudo useradd -m -d /opt/tomcat -U -s /bin/false tomcat
+
+sudo yum update
+sudo yum search java
+and install java
+
+java -version
+
+cd /tmp
+wget https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.44/bin/apache-tomcat-10.1.44.tar.gz
+sudo tar xzvf apache-tomcat-10*tar.gz -C /opt/tomcat --strip-components=1
+
+sudo chown -R tomcat:tomcat /opt/tomcat/
+sudo chmod -R u+x /opt/tomcat/bin
+
+
+->> Step 2 : Config Admin Users
+sudo vi /opt/tomcat/conf/tomcat-users.xml
+
+### Change the password and add below
+/opt/tomcat/conf/tomcat-users.xml
+<role rolename="manager-gui" />
+<user username="manager" password="manager_password" roles="manager-gui" />
+
+<role rolename="admin-gui" />
+<user username="admin" password="admin_password" roles="manager-gui,admin-gui" />
+
+
+sudo vi /opt/tomcat/webapps/manager/META-INF/context.xml
+sudo nano /opt/tomcat/webapps/host-manager/META-INF/context.xml
+
+
+sudo update-alternatives --config java
+
+xxxxxxxxxxxxxx
+
+->> Step3 : Create a systemd service
+
+sudo vi /etc/systemd/system/tomcat.service
+
+---------------
+[Unit]
+Description=Tomcat
+After=network.target
+
+[Service]
+Type=forking
+
+User=tomcat
+Group=tomcat
+
+Environment="JAVA_HOME=/usr/lib/jvm/java-11-openjdk-11.0.20.1.1-2.el9.x86_64"
+Environment="JAVA_OPTS=-Djava.security.egd=file:///dev/urandom"
+Environment="CATALINA_BASE=/opt/tomcat"
+Environment="CATALINA_HOME=/opt/tomcat"
+Environment="CATALINA_PID=/opt/tomcat/temp/tomcat.pid"
+Environment="CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC"
+
+ExecStart=/opt/tomcat/bin/startup.sh
+ExecStop=/opt/tomcat/bin/shutdown.sh
+
+RestartSec=10
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+--------------
+
+sudo systemctl daemon-reload
+sudo systemctl start tomcat
+sudo systemctl status tomcat
+sudo systemctl enable tomcat
+
+-----------xxxxxxxxxx-----------
+
+.war app file to deploy 
+
+copy the file to Tomcat Installation
+
+/opt/tomcat/bin
+/opt/tomcat/conf
+/opt/tomcat/webapps   ← (deployment directory)
+/opt/tomcat/logs
+
+and 
+
+Restart the tomcat 
+
+and 
+
+sudo ls -l /opt/tomcat/webapps/   (It's will extract to folder)
